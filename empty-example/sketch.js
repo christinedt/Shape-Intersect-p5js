@@ -3,18 +3,21 @@ var BobsUno, options;
 function setup() {
   createCanvas(1000, 680);
   colorMode(HSB);
+  background(0);
   frameRate(20);
   options = {
     bobNumber: 2,
     bobSize: 20,
+    fieldSize: 1500,
     doRunInterference: true,
-    doDisplayBob: true
+    fieldPulseRate: 3,
+    doDisplayBob: false
   };
   BobsUno = new BobSystem(options);
 }
 
 function draw() {
-  background(0);
+  // background(0);
   BobsUno.runBobs();
 }
 
@@ -24,7 +27,9 @@ function BobSystem(options) {
       bobNumber = options.bobNumber,
       bobOptions = {
         bobSize: options.bobSize,
+        fieldSize: options.fieldSize,
         doRunInterference: options.doRunInterference,
+        fieldPulseRate: options.fieldPulseRate,
         doDisplayBob: options.doDisplayBob
       }
     
@@ -45,23 +50,19 @@ function BobSystem(options) {
 //Bob
 function Bob(bobOptions) {
   var doRunInterference = bobOptions.doRunInterference,
+      fieldPulseRate = bobOptions.fieldPulseRate,
   	  doDisplayBob = bobOptions.doDisplayBob,
-      size = bobOptions.bobSize, 
-      fieldSize, 
-      fieldRings, 
+      size = bobOptions.bobSize,
+      fieldFrame = 0, 
       hue,
-      radius, 
-      fieldIncrement, 
-      fieldRadius,
-      fieldTypes = [ "circle", "square" ],
-      fieldType;
+      radius;
 
   //Bob properties
   hue = Math.floor(Math.random() * 256);
   radius = size/2;
   
   //field properties
-  this.fieldSize = 1000;
+  this.fieldSize = bobOptions.fieldSize;
   this.fieldRadius = this.fieldSize/2;
   this.fieldRings = 10;
   this.fieldIncrement = this.fieldRadius/this.fieldRings;
@@ -78,11 +79,11 @@ function Bob(bobOptions) {
 
     if(doDisplayBob) {
     	this.display();
-	}
+	  }
 
-	if(doRunInterference) {
-		bills.forEach(this.runInterference, this);
-	}
+  	if(doRunInterference) {
+  		bills.forEach(this.runInterference, this);
+  	}
   }
   
   //this.update()
@@ -109,13 +110,15 @@ function Bob(bobOptions) {
   	var thisBob = this,
   		otherBob = bill;
 
-  	console.log(thisBob, otherBob);
     var d = p5.Vector.dist(thisBob.position, otherBob.position),
         dVector = p5.Vector.sub(otherBob.position, thisBob.position);
+
+    fieldFrame = fieldFrame%this.fieldIncrement;
     
     if(d > 0){
-      for(var i = thisBob.fieldRadius; i > 0; i-=thisBob.fieldIncrement) {
-        for(var j = otherBob.fieldRadius; j > 0; j-=otherBob.fieldIncrement) {
+
+      for(var i = fieldFrame; i < thisBob.fieldRadius; i+=thisBob.fieldIncrement) {
+        for(var j = fieldFrame; j < otherBob.fieldRadius; j+=otherBob.fieldIncrement) {
           var areIntersecting = checkIntersect(thisBob.position.x, 
                                                 thisBob.position.y, 
                                                 i, 
@@ -141,6 +144,8 @@ function Bob(bobOptions) {
         }
       }
     }
+
+    fieldFrame += fieldPulseRate;
   }
   
   this.renderBob = function() {
