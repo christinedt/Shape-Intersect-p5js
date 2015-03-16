@@ -1,10 +1,16 @@
-var BobsUno;
+var BobsUno, options;
 
 function setup() {
   createCanvas(1000, 680);
   colorMode(HSB);
   frameRate(20);
-  BobsUno = new BobSystem(2);
+  options = {
+    bobNumber: 2,
+    bobSize: 20,
+    doRunInterference: true,
+    doDisplayBob: true
+  };
+  BobsUno = new BobSystem(options);
 }
 
 function draw() {
@@ -13,14 +19,17 @@ function draw() {
 }
 
 //Bob System
-function BobSystem(bobNumber) {
-  var bobs, bobAmount;
-  
-  bobs = [];
-  bobAmount = bobNumber;
+function BobSystem(options) {
+  var bobs = [], 
+      bobNumber = options.bobNumber,
+      bobOptions = {
+        bobSize: options.bobSize,
+        doRunInterference: options.doRunInterference,
+        doDisplayBob: options.doDisplayBob
+      }
     
-  for(var i = 0; i < bobAmount; i++){
-  	newBob = new Bob();
+  for(var i = 0; i < bobNumber; i++){
+  	newBob = new Bob(bobOptions);
       bobs.push(newBob);
   }
   
@@ -34,10 +43,10 @@ function BobSystem(bobNumber) {
 }
 
 //Bob
-function Bob() {
-  var doRunInterference = true,
-  	  doDisplayBob = true,
-      size, 
+function Bob(bobOptions) {
+  var doRunInterference = bobOptions.doRunInterference,
+  	  doDisplayBob = bobOptions.doDisplayBob,
+      size = bobOptions.bobSize, 
       fieldSize, 
       fieldRings, 
       hue,
@@ -49,7 +58,6 @@ function Bob() {
 
   //Bob properties
   hue = Math.floor(Math.random() * 256);
-  size = 30;
   radius = size/2;
   
   //field properties
