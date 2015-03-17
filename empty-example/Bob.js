@@ -42,10 +42,7 @@ function Bob(bobOptions) {
       bobView.update(bills);
     }
 
-    if(doDisplayBob) {
-    	bobView.display();
-	  }
-
+    bobView.display();
     bobView.reset();
   }
   
@@ -80,28 +77,18 @@ function Bob(bobOptions) {
         distance = p5.Vector.dist(thisBob.position, otherBob.position),
         dVector = p5.Vector.sub(otherBob.position, thisBob.position),
         dNormal = dVector.normalize(),
-        pullForce = dNormal.mult(0.01);
+        pullForce = dNormal.mult(-0.0001);
 
     fieldPulseFrame = fieldPulseFrame%bobView.fieldIncrement;
     
     //if otherBob is not thisBob
-    if(distance > 0){
-      bobView.calculateIntersections(thisBob, otherBob, pullForce);
-    }
-
-    fieldPulseFrame += fieldPulseRate;
-  }
-
-  bobView.calculateIntersections = function(thisBob, otherBob, pullForce) {
-    for(var i = fieldPulseFrame; i < thisBob.fieldRadius; i+=thisBob.fieldIncrement) {
-      for(var j = fieldPulseFrame; j < otherBob.fieldRadius; j+=otherBob.fieldIncrement) {
-        bobView.checkFieldIntersect(thisBob, otherBob, pullForce, i, j);
-      }
-    }
-  }
-
-  bobView.checkFieldIntersect = function(thisBob, otherBob, pullForce, i, j) {
-    var areIntersecting = checkIntersect(
+    if(distance > 0) {
+      //for each ring of thisBob's field
+      for(var i = fieldPulseFrame; i < thisBob.fieldRadius; i+=thisBob.fieldIncrement) {
+        //for each ring of otherBob's field
+        for(var j = fieldPulseFrame; j < otherBob.fieldRadius; j+=otherBob.fieldIncrement) {
+          //check if the two rings intersect
+          var areIntersecting = checkIntersect(
                                 thisBob.position.x, 
                                 thisBob.position.y, 
                                 i, 
@@ -110,31 +97,50 @@ function Bob(bobOptions) {
                                 j
                               );
                                               
-        //If the fields are crossing and have intersection points
-        switch(areIntersecting) {
-        //fields intersect and have intersection points
-          case 1:
-            var intersections = getIntersections(
-                                  thisBob.position.x, 
-                                  thisBob.position.y, 
-                                  i, 
-                                  otherBob.position.x, 
-                                  otherBob.position.y, 
-                                  j
-                                );
+          switch(areIntersecting) {
+          //fields intersect and have intersection points
+            case 1:
+              var intersections = getIntersections(
+                                    thisBob.position.x, 
+                                    thisBob.position.y, 
+                                    i, 
+                                    otherBob.position.x, 
+                                    otherBob.position.y, 
+                                    j
+                                  );
 
-            bobView.intersectionPoints.push(intersections);
-            bobView.forces.push(pullForce);
-            break;
+              var firstIntersectionPoint = createVector(intersections[0], intersections[1]);
+              var secondIntersectionPoint = createVector(intersections[2], intersections[3]);
 
-        //If one of the fields is contained in the other
-          case -1:
-            // renderOverlapShape(i);
-            break;
+              bobView.intersectionPoints.push(firstIntersectionPoint);
+              bobView.intersectionPoints.push(secondIntersectionPoint);
 
-          default:
-            break;
+              bobView.renderIntersectShape(intersections, distance);
+
+              var pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
+              pushVector1 = pushVector1.normalize();
+              pushVector1 = pushVector1.mult(0.0001);
+
+              var pushVector2 = p5.Vector.sub(thisBob.position, secondIntersectionPoint);
+              pushVector2 = pushVector2.normalize();
+              pushVector2 = pushVector2.mult(0.0009);
+              bobView.forces.push(pushVector1);
+              bobView.forces.push(pushVector2);
+              break;
+
+          //If one of the fields is contained in the other
+            case -1:
+              // renderOverlapShape(i);
+              break;
+
+            default:
+              break;
+          }
         }
+      }
+    }
+
+    fieldPulseFrame += fieldPulseRate;
   }
   
   bobView.renderBob = function() {
@@ -143,7 +149,7 @@ function Bob(bobOptions) {
     ellipse(bobView.position.x, bobView.position.y, size, size);
   }
   
-  bobView.renderIntersectShape = function(intersections, distance, tempSize) {
+  bobView.renderIntersectShape = function(intersections, distance) {
     var circleNormal = createVector(radius, 0),
         distIntA = createVector(intersections[0], intersections[1]),
         distIntB = createVector(intersections[2], intersections[3]),
