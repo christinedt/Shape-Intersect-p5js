@@ -5,12 +5,12 @@ function setup() {
   colorMode(HSB);
   frameRate(20);
   options = {
-    bobNumber: 2,
+    bobNumber: 5,
     bobSize: 20,
-    fieldSize: 1500,
+    fieldSize: 500,
     doRunBobs: true,
     doRunInterference: true,
-    fieldPulseRate: 1,
+    fieldPulseRate: 0,
     doDisplayBob: true
   };
   BobsUno = new BobSystem(options);
