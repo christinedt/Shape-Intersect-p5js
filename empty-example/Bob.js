@@ -10,7 +10,8 @@ function Bob(bobOptions) {
     //Scalars
       fieldPulseRate = bobOptions.fieldPulseRate,
       size = bobOptions.bobSize,
-      fieldPulseFrame = 0, 
+      fieldPulseFrame = 0,
+      pushForce = bobOptions.pushForce, 
       hue = Math.floor(Math.random() * 256),
       radius = size/2,
       tempXPos = Math.floor(Math.random() * (width-size) + size/2),
@@ -19,7 +20,7 @@ function Bob(bobOptions) {
   //External Properties
   bobView.fieldSize = bobOptions.fieldSize;
   bobView.fieldRadius = bobView.fieldSize/2;
-  bobView.fieldRings = Math.floor(Math.random() * 20 + 10);
+  bobView.fieldRings = Math.floor(Math.random() * 20 + 5);
   bobView.fieldIncrement = bobView.fieldRadius/bobView.fieldRings;
 
     //Vectors
@@ -129,13 +130,16 @@ function Bob(bobOptions) {
 
               bobView.renderIntersectShape(intersections, distance);
 
+              var pushForceFactor = pushForce / (i * j);
+
               var pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
               pushVector1 = pushVector1.normalize();
-              pushVector1 = pushVector1.mult(-0.0009);
+              pushVector1 = pushVector1.mult(pushForceFactor);
 
               var pushVector2 = p5.Vector.sub(thisBob.position, secondIntersectionPoint);
               pushVector2 = pushVector2.normalize();
-              pushVector2 = pushVector2.mult(-0.0009);
+              pushVector2 = pushVector2.mult(pushForceFactor);
+
               bobView.forces.push(pushVector1);
               bobView.forces.push(pushVector2);
               break;

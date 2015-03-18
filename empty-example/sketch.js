@@ -1,17 +1,18 @@
 var BobsUno, options;
 
 function setup() {
-  createCanvas(1000, 680);
+  createCanvas(800, 450);
   colorMode(HSB);
   frameRate(20);
   options = {
-    bobNumber: 5,
-    bobSize: 20,
-    fieldSize: 500,
     doRunBobs: true,
+    doDisplayBob: true,
+    bobNumber: 10,
+    bobSize: 20,
     doRunInterference: true,
+    fieldSize: 200,
     fieldPulseRate: 0,
-    doDisplayBob: true
+    pushForce: 1
   };
   BobsUno = new BobSystem(options);
 }
