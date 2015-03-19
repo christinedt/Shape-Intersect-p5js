@@ -8,7 +8,8 @@ function BobSystem(options) {
         doRunBobs: options.doRunBobs,
         doRunInterference: options.doRunInterference,
         fieldPulseRate: options.fieldPulseRate,
-        doDisplayBob: options.doDisplayBob
+        doDisplayBob: options.doDisplayBob,
+        pushForce: options.pushForce
       }
     
   for(var i = 0; i < bobNumber; i++){

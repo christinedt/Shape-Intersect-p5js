@@ -10,7 +10,8 @@ function Bob(bobOptions) {
     //Scalars
       fieldPulseRate = bobOptions.fieldPulseRate,
       size = bobOptions.bobSize,
-      fieldPulseFrame = 0, 
+      fieldPulseFrame = 0,
+      pushForce = bobOptions.pushForce, 
       hue = Math.floor(Math.random() * 256),
       radius = size/2,
       tempXPos = Math.floor(Math.random() * (width-size) + size/2),
@@ -19,12 +20,12 @@ function Bob(bobOptions) {
   //External Properties
   bobView.fieldSize = bobOptions.fieldSize;
   bobView.fieldRadius = bobView.fieldSize/2;
-  bobView.fieldRings = 10;
+  bobView.fieldRings = Math.floor(Math.random() * 20 + 5);
   bobView.fieldIncrement = bobView.fieldRadius/bobView.fieldRings;
 
     //Vectors
   bobView.position = createVector(tempXPos, tempYPos);
-  bobView.velocity = p5.Vector.random2D();
+  bobView.velocity = p5.Vector.random2D().mult(4);
   bobView.acceleration = createVector(0, 0);
 
     //Arrays
@@ -57,8 +58,21 @@ function Bob(bobOptions) {
   }
 
   bobView.checkForWalls = function() {
-    if((bobView.position.x - size/2) <= 0 || (bobView.position.x + size/2) >= width){ bobView.velocity.x *= -1; }
-    if((bobView.position.y - size/2) <= 0 || (bobView.position.y + size/2) >= height){ bobView.velocity.y *= -1; }
+    if((bobView.position.x - radius) <= 0){
+      bobView.velocity.x *= -1; 
+    }
+    if((bobView.position.x + size/2) >= width){  
+      bobView.position.x = width - radius; 
+      bobView.velocity.x *= -1; 
+    }
+    if((bobView.position.y - size/2) <= 0){ 
+      bobView.position.y = radius; 
+      bobView.velocity.y *= -1; 
+    }
+    if((bobView.position.y + size/2) >= height){ 
+      bobView.position.y = height - radius; 
+      bobView.velocity.y *= -1; 
+    }
   }
 
   bobView.addForce = function(force, index, forces) {
@@ -76,10 +90,9 @@ function Bob(bobOptions) {
   		  otherBob = bill,
         distance = p5.Vector.dist(thisBob.position, otherBob.position),
         dVector = p5.Vector.sub(otherBob.position, thisBob.position),
-        dNormal = dVector.normalize(),
-        pullForce = dNormal.mult(-0.0001);
+        dNormal = dVector.normalize();
 
-    fieldPulseFrame = fieldPulseFrame%bobView.fieldIncrement;
+    fieldPulseFrame = fieldPulseFrame % bobView.fieldIncrement;
     
     //if otherBob is not thisBob
     if(distance > 0) {
@@ -117,13 +130,16 @@ function Bob(bobOptions) {
 
               bobView.renderIntersectShape(intersections, distance);
 
+              var pushForceFactor = pushForce / (i * j);
+
               var pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
               pushVector1 = pushVector1.normalize();
-              pushVector1 = pushVector1.mult(0.0001);
+              pushVector1 = pushVector1.mult(pushForceFactor);
 
               var pushVector2 = p5.Vector.sub(thisBob.position, secondIntersectionPoint);
               pushVector2 = pushVector2.normalize();
-              pushVector2 = pushVector2.mult(0.0009);
+              pushVector2 = pushVector2.mult(pushForceFactor);
+
               bobView.forces.push(pushVector1);
               bobView.forces.push(pushVector2);
               break;
