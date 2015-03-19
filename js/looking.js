@@ -12,7 +12,7 @@ function setup() {
     doRunInterference: true,
     fieldSize: 200,
     fieldPulseRate: 0,
-    pushForce: 1
+    pushForce: 10
   };
   BobsUno = new BobSystem(options);
 }
