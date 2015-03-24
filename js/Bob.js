@@ -10,14 +10,15 @@ function Bob(bobOptions) {
     //Scalars
       fieldPulseRate = bobOptions.fieldPulseRate,
       size = bobOptions.bobSize,
+      hue = Math.floor(Math.random() * 256),
       fieldPulseFrame = 0,
       pushForce = bobOptions.pushForce, 
-      hue = Math.floor(Math.random() * 256),
       radius = size/2,
       tempXPos = Math.floor(Math.random() * (width-size) + size/2),
       tempYPos = Math.floor(Math.random() * (height-size) + size/2);
 
   //External Properties
+  bobView.hue = hue;
   bobView.fieldSize = bobOptions.fieldSize;
   bobView.fieldRadius = bobView.fieldSize/2;
   bobView.fieldRings = Math.floor(Math.random() * 20 + 5);
@@ -58,20 +59,29 @@ function Bob(bobOptions) {
   }
 
   bobView.checkForWalls = function() {
-    if((bobView.position.x - radius) <= 0){
-      bobView.velocity.x *= -1; 
+    if((bobView.position.x - radius) <= 0){  
+      bobView.position.x = radius;
+      if(bobView.velocity.x < 0){
+        bobView.velocity.x *= -1; 
+      }
     }
     if((bobView.position.x + size/2) >= width){  
       bobView.position.x = width - radius; 
-      bobView.velocity.x *= -1; 
+      if(bobView.velocity.x > 0){
+        bobView.velocity.x *= -1; 
+      }
     }
     if((bobView.position.y - size/2) <= 0){ 
       bobView.position.y = radius; 
-      bobView.velocity.y *= -1; 
+      if(bobView.velocity.y < 0){
+        bobView.velocity.y *= -1; 
+      }
     }
     if((bobView.position.y + size/2) >= height){ 
       bobView.position.y = height - radius; 
-      bobView.velocity.y *= -1; 
+      if(bobView.velocity.y > 0){
+        bobView.velocity.y *= -1; 
+      }
     }
   }
 
@@ -128,7 +138,7 @@ function Bob(bobOptions) {
               bobView.intersectionPoints.push(firstIntersectionPoint);
               bobView.intersectionPoints.push(secondIntersectionPoint);
 
-              bobView.renderIntersectShape(intersections, distance);
+              bobView.renderIntersectShape(intersections, distance, otherBob.hue);
 
               var pushForceFactor = pushForce / (i * j);
 
@@ -165,16 +175,42 @@ function Bob(bobOptions) {
     ellipse(bobView.position.x, bobView.position.y, size, size);
   }
   
-  bobView.renderIntersectShape = function(intersections, distance) {
+  bobView.renderIntersectShape = function(intersections, distance, otherHue) {
     var circleNormal = createVector(radius, 0),
         distIntA = createVector(intersections[0], intersections[1]),
         distIntB = createVector(intersections[2], intersections[3]),
-        angle1, angle2;
+        angle1, angle2,
+        hue1, newHue, hueGap, hueDifference;
+
+    hueDifference = Math.abs(bobView.hue - otherHue);
+    
+    if(hueDifference > 128){
+
+      if(bobView.hue > otherHue) {
+        hue1 = bobView.hue;
+      } else {
+        hue1 = otherHue;
+      }
+
+      hueGap = (255 - hueDifference)/2;
+
+    } else {
+
+      if(bobView.hue < otherHue) {
+        hue1 = bobView.hue;
+      } else {
+        hue1 = otherHue;
+      }
+
+      hueGap = hueDifference/2;
+    }
+
+    newHue = (hue1 + hueGap) % 255;
     
     //Dots
     var dotSize = 2;
     noStroke();
-    fill(hue, 200, 200, 200);
+    fill(newHue, 200, 200, 200);
     ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
 //    ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
     

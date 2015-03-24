@@ -1,21 +1,25 @@
-var BobsUno, options;
+var BobsUno, options, sliderValue, sketch, slider;
 
 function setup() {
-  var sketch = createCanvas(windowWidth, windowHeight);
+
+  sketch = createCanvas(windowWidth, windowHeight);
   sketch.parent("sketch-container");
-  colorMode(HSB);
-  var slider = createSlider(10,100,10);
+  
+  slider = createSlider(2, 20, 2);
   slider.parent("bob-slider");
   slider.class("control-input");
-  
+  slider.id("bob-control");
+
+  colorMode(HSB);
   frameRate(20);
+
   options = {
     doRunBobs: true,
     doDisplayBob: true,
     bobNumber: 10,
     bobSize: 20,
     doRunInterference: true,
-    fieldSize: 200,
+    fieldSize: 250,
     fieldPulseRate: 0,
     pushForce: 10
   };
@@ -23,8 +27,9 @@ function setup() {
 }
 
 function draw() {
+  sliderValue = slider.value();
   background(0);
-  BobsUno.runBobs();
+  BobsUno.runBobs(sliderValue);
 }
 
 function windowResized() {
