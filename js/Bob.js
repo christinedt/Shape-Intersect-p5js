@@ -43,9 +43,7 @@ function Bob(bobOptions) {
     bobView.setVariables(bobRunOptions);
 
     if(doRunInterference) {
-      if(!activeBobMode || (activeBobMode && bobView.isActiveBob)) {
-        bills.forEach(bobView.runInterference, this);
-      }
+      bills.forEach(bobView.runInterference, this);
     }
 
     if(doRunBob) {
@@ -175,7 +173,9 @@ function Bob(bobOptions) {
     firstIntersectionPoint = createVector(intersections[0], intersections[1]);
     secondIntersectionPoint = createVector(intersections[2], intersections[3]);
 
-    bobView.renderIntersectShape(intersections, distance, otherBob.hue);
+    if(!activeBobMode || (activeBobMode && bobView.isActiveBob)) {
+      bobView.renderIntersectShape(intersections, distance, otherBob.hue);
+    }
 
     pushForceFactor = pushForce / (i * j);
 
