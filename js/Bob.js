@@ -1,27 +1,32 @@
 //Bob
 function Bob(bobOptions) {
+
   //Internal Properties
   var bobView = this,
     //Booleans
       doRunInterference = bobOptions.doRunInterference,
       doRunBob = bobOptions.doRunBobs,
       doDisplayBob = bobOptions.doDisplayBob,
+      activeBobMode,
 
     //Scalars
       fieldPulseRate = bobOptions.fieldPulseRate,
       size = bobOptions.bobSize,
       hue = Math.floor(Math.random() * 256),
       fieldPulseFrame = 0,
-      pushForce = bobOptions.pushForce, 
+      pushForce, 
       radius = size/2,
       tempXPos = Math.floor(Math.random() * (width-size) + size/2),
       tempYPos = Math.floor(Math.random() * (height-size) + size/2);
 
   //External Properties
+  bobView.isActiveBob = false;
+  bobView.size = size;
+  bobView.radius = radius;
   bobView.hue = hue;
   bobView.fieldSize = bobOptions.fieldSize;
   bobView.fieldRadius = bobView.fieldSize/2;
-  bobView.fieldRings = Math.floor(Math.random() * 20 + 5);
+  bobView.fieldRings = Math.floor(Math.random() * 25 + 5);
   bobView.fieldIncrement = bobView.fieldRadius/bobView.fieldRings;
 
     //Vectors
@@ -31,13 +36,16 @@ function Bob(bobOptions) {
 
     //Arrays
   bobView.forces = [];
-  bobView.intersectionPoints = [];
   
   //bobView.run(bills)
   //Operates the Bob, passing it the list of other Bobs (as bills)
-  bobView.run = function(bills) {
+  bobView.run = function(bills, bobRunOptions) {
+    bobView.setVariables(bobRunOptions);
+
     if(doRunInterference) {
-      bills.forEach(bobView.runInterference, this);
+      if(!activeBobMode || (activeBobMode && bobView.isActiveBob)) {
+        bills.forEach(bobView.runInterference, this);
+      }
     }
 
     if(doRunBob) {
@@ -46,6 +54,14 @@ function Bob(bobOptions) {
 
     bobView.display();
     bobView.reset();
+  }
+
+  bobView.setVariables = function(bobRunOptions) {
+    pushForce = bobRunOptions.forceValue;
+    activeBobMode = bobRunOptions.activeBobMode;
+    if(!activeBobMode) {
+      bobView.isActiveBob = false;
+    }
   }
   
   //bobView.update()
@@ -123,35 +139,7 @@ function Bob(bobOptions) {
           switch(areIntersecting) {
           //fields intersect and have intersection points
             case 1:
-              var intersections = getIntersections(
-                                    thisBob.position.x, 
-                                    thisBob.position.y, 
-                                    i, 
-                                    otherBob.position.x, 
-                                    otherBob.position.y, 
-                                    j
-                                  );
-
-              var firstIntersectionPoint = createVector(intersections[0], intersections[1]);
-              var secondIntersectionPoint = createVector(intersections[2], intersections[3]);
-
-              bobView.intersectionPoints.push(firstIntersectionPoint);
-              bobView.intersectionPoints.push(secondIntersectionPoint);
-
-              bobView.renderIntersectShape(intersections, distance, otherBob.hue);
-
-              var pushForceFactor = pushForce / (i * j);
-
-              var pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
-              pushVector1 = pushVector1.normalize();
-              pushVector1 = pushVector1.mult(pushForceFactor);
-
-              var pushVector2 = p5.Vector.sub(thisBob.position, secondIntersectionPoint);
-              pushVector2 = pushVector2.normalize();
-              pushVector2 = pushVector2.mult(pushForceFactor);
-
-              bobView.forces.push(pushVector1);
-              bobView.forces.push(pushVector2);
+              bobView.handleIntersection(thisBob, otherBob, distance, i, j);
               break;
 
           //If one of the fields is contained in the other
@@ -165,12 +153,51 @@ function Bob(bobOptions) {
         }
       }
     }
+  }
 
-    fieldPulseFrame += fieldPulseRate;
+  bobView.handleIntersection = function(thisBob, otherBob, distance, i, j) {
+    var intersections,
+        firstIntersectionPoint,
+        secondIntersectionPoint,
+        pushForceFactor,
+        pushVector1,
+        pushVector2;
+
+    intersections = getIntersections(
+                      thisBob.position.x, 
+                      thisBob.position.y, 
+                      i, 
+                      otherBob.position.x, 
+                      otherBob.position.y, 
+                      j
+                    );
+
+    firstIntersectionPoint = createVector(intersections[0], intersections[1]);
+    secondIntersectionPoint = createVector(intersections[2], intersections[3]);
+
+    bobView.renderIntersectShape(intersections, distance, otherBob.hue);
+
+    pushForceFactor = pushForce / (i * j);
+
+    pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
+    pushVector1 = pushVector1.normalize();
+    pushVector1 = pushVector1.mult(pushForceFactor);
+
+    pushVector2 = p5.Vector.sub(thisBob.position, secondIntersectionPoint);
+    pushVector2 = pushVector2.normalize();
+    pushVector2 = pushVector2.mult(pushForceFactor);
+
+    bobView.forces.push(pushVector1);
+    bobView.forces.push(pushVector2);
   }
   
   bobView.renderBob = function() {
     noStroke();
+
+    if(bobView.isActiveBob) {
+      stroke(0, 255, 255);
+    }
+
     fill(hue, 200, 200);
     ellipse(bobView.position.x, bobView.position.y, size, size);
   }
@@ -179,40 +206,19 @@ function Bob(bobOptions) {
     var circleNormal = createVector(radius, 0),
         distIntA = createVector(intersections[0], intersections[1]),
         distIntB = createVector(intersections[2], intersections[3]),
-        angle1, angle2,
-        hue1, newHue, hueGap, hueDifference;
+        angle1, angle2, newHue;
 
-    hueDifference = Math.abs(bobView.hue - otherHue);
-    
-    if(hueDifference > 128){
-
-      if(bobView.hue > otherHue) {
-        hue1 = bobView.hue;
-      } else {
-        hue1 = otherHue;
-      }
-
-      hueGap = (255 - hueDifference)/2;
-
-    } else {
-
-      if(bobView.hue < otherHue) {
-        hue1 = bobView.hue;
-      } else {
-        hue1 = otherHue;
-      }
-
-      hueGap = hueDifference/2;
-    }
-
-    newHue = (hue1 + hueGap) % 255;
+    newHue = bobView.averageHues(bobView.hue, otherHue);
+        
     
     //Dots
     var dotSize = 2;
     noStroke();
     fill(newHue, 200, 200, 200);
     ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
-//    ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
+    if(activeBobMode && bobView.isActiveBob) {
+      ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
+    }
     
     //Arcs
     /*
@@ -249,6 +255,32 @@ function Bob(bobOptions) {
     arc(position.x, position.y, 2*tempSize, 2*tempSize, angle1, angle2, OPEN);
     */
   }
+
+  bobView.averageHues = function(hue1, hue2) {
+    var baseHue, newHue, hueGap, hueDifference;
+    hueDifference = Math.abs(hue1 - hue2);
+    
+    if(hueDifference > 128){
+      if(hue1 > hue2) {
+        baseHue = hue1;
+      } else {
+        baseHue = hue2;
+      }
+
+      hueGap = (255 - hueDifference)/2;
+    } else {
+      if(hue1 < hue2) {
+        baseHue = hue1;
+      } else {
+        baseHue = hue2;
+      }
+
+      hueGap = hueDifference/2;
+    }
+
+    newHue = (baseHue + hueGap) % 255;
+    return newHue;
+  }
   
   bobView.renderOverlapShape = function(shapeSize){
     noFill();
@@ -268,6 +300,6 @@ function Bob(bobOptions) {
   bobView.reset = function() {
     bobView.acceleration.mult(0);
     bobView.forces = [];
-    bobView.intersectionPoints = [];
+    fieldPulseFrame += fieldPulseRate;
   }
 }
