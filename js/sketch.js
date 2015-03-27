@@ -32,7 +32,7 @@ function setup() {
     doDisplayBob: true,
     bobSize: 20,
     doRunInterference: true,
-    fieldSize: 500,
+    fieldSize: 200,
     fieldPulseRate: 0
   };
   BobsUno = new BobSystem(options);

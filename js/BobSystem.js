@@ -19,8 +19,6 @@ function BobSystem(options) {
   
   this.runBobs = function(sliderOptions){
     this.setBobRunOptions(sliderOptions);
-
-  console.log("active bob mode", bobRunOptions.activeBobMode);
     
     if(sliderOptions.bobAmount > bobs.length) {
       for(var i = bobs.length; i < sliderOptions.bobAmount; i++){

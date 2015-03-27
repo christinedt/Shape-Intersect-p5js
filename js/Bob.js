@@ -26,7 +26,7 @@ function Bob(bobOptions) {
   bobView.hue = hue;
   bobView.fieldSize = bobOptions.fieldSize;
   bobView.fieldRadius = bobView.fieldSize/2;
-  bobView.fieldRings = Math.floor(Math.random() * 25 + 5);
+  bobView.fieldRings = Math.floor(Math.random() * 15 + 5);
   bobView.fieldIncrement = bobView.fieldRadius/bobView.fieldRings;
 
     //Vectors
@@ -106,6 +106,9 @@ function Bob(bobOptions) {
   //bobView.display()
   //Runs the functions that create the visual appearance of the Bob, no params
   bobView.display = function() {
+    if(activeBobMode && bobView.isActiveBob){
+      bobView.renderField();
+    }
     bobView.renderBob();
   }
   
@@ -159,7 +162,8 @@ function Bob(bobOptions) {
         secondIntersectionPoint,
         pushForceFactor,
         pushVector1,
-        pushVector2;
+        pushVector2,
+        hueDifference;
 
     intersections = getIntersections(
                       thisBob.position.x, 
@@ -177,7 +181,9 @@ function Bob(bobOptions) {
       bobView.renderIntersectShape(intersections, distance, otherBob.hue);
     }
 
-    pushForceFactor = pushForce / (i * j);
+    hueDifference = bobView.getHueGap(thisBob.hue, otherBob.hue);
+
+    pushForceFactor = (pushForce * hueDifference) / (i * j * 10);
 
     pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
     pushVector1 = pushVector1.normalize();
@@ -195,7 +201,8 @@ function Bob(bobOptions) {
     noStroke();
 
     if(bobView.isActiveBob) {
-      stroke(0, 255, 255);
+      strokeWeight(4);
+      stroke(0, 0, 255, 100);
     }
 
     fill(hue, 200, 200);
@@ -256,18 +263,32 @@ function Bob(bobOptions) {
     */
   }
 
+  bobView.getHueGap = function(hue1, hue2) {
+    var hueDifference, hueGap;
+    hueDifference = Math.abs(hue1 - hue2);
+
+    if(hueDifference > 128){
+      hueGap = (255 - hueDifference)/2;
+    } else {
+      hueGap = hueDifference/2;
+    }
+
+    return hueGap;
+  }
+
   bobView.averageHues = function(hue1, hue2) {
-    var baseHue, newHue, hueGap, hueDifference;
+    var baseHue, newHue, hueGap, hueDifference,
+        maxHue = 255;
     hueDifference = Math.abs(hue1 - hue2);
     
-    if(hueDifference > 128){
+    if(hueDifference > (maxHue/2)){
       if(hue1 > hue2) {
         baseHue = hue1;
       } else {
         baseHue = hue2;
       }
 
-      hueGap = (255 - hueDifference)/2;
+      hueGap = (maxHue - hueDifference)/2;
     } else {
       if(hue1 < hue2) {
         baseHue = hue1;
@@ -278,7 +299,7 @@ function Bob(bobOptions) {
       hueGap = hueDifference/2;
     }
 
-    newHue = (baseHue + hueGap) % 255;
+    newHue = (baseHue + hueGap) % maxHue;
     return newHue;
   }
   
@@ -290,9 +311,10 @@ function Bob(bobOptions) {
   }
   
   bobView.renderField = function() {
-    stroke(100, 50);
+    strokeWeight(1);
     noFill();
-    for(var i = 0; i < fieldSize; i+=20){
+    for(var i = fieldPulseFrame; i < bobView.fieldSize; i+=(bobView.fieldIncrement*2)){
+      stroke(0, 0, 255, (200-i));
       ellipse(bobView.position.x, bobView.position.y, i, i);
     }
   }
