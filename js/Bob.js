@@ -205,7 +205,11 @@ function Bob(bobOptions) {
       stroke(0, 0, 255, 100);
     }
 
-    fill(hue, 200, 200);
+    if(bobView.isActiveBob || !activeBobMode){
+      fill(hue, 200, 200);
+    } else {
+      fill(hue, 200, 200, 50);
+    }
     ellipse(bobView.position.x, bobView.position.y, size, size);
   }
   
@@ -313,8 +317,10 @@ function Bob(bobOptions) {
   bobView.renderField = function() {
     strokeWeight(1);
     noFill();
-    for(var i = fieldPulseFrame; i < bobView.fieldSize; i+=(bobView.fieldIncrement*2)){
-      stroke(0, 0, 255, (200-i));
+    for(var i = (2*fieldPulseFrame); i < bobView.fieldSize; i+=(bobView.fieldIncrement*2)){
+      var opacity = map(i, 0, bobView.fieldSize, 0, 255);
+      opacity = (255-opacity);
+      stroke(0, 0, 255, opacity);
       ellipse(bobView.position.x, bobView.position.y, i, i);
     }
   }

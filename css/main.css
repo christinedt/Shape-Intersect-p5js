@@ -132,6 +132,19 @@ input[type=checkbox] {
 	width: 100%;
 }
 
+.button-input {
+	background: #c00;
+	border: none;
+	color: #fff;
+	display: block;
+	position: relative;
+	width: 100%;
+}
+
+.button-input.on {
+	background: #0c0;
+}
+
 .control-label {
 	color: #fff;
 	display: inline-block;
@@ -142,9 +155,26 @@ input[type=checkbox] {
 	width: 20%;
 }
 
+.button-label {
+	color: #fff;
+	display: inline-block;
+	float: left;
+	font-family: 'Open Sans', sans-serif;
+	position: relative;
+	text-align: center;
+	width: 60%;
+}
+
 .control-container {
 	display: inline-block;
 	float: left;
 	position: relative;
 	width: 59%;
+}
+
+.button-container {
+	display: inline-block;
+	float: left;
+	position: relative;
+	width: 40%;
 }

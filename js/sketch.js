@@ -7,9 +7,9 @@ function setup() {
   sketch = createCanvas(windowWidth, windowHeight);
   sketch.parent("sketch-container");
 
-  activeBobButton = createButton('Active Bob Mode is Off', true);
+  activeBobButton = createButton('OFF', true);
   activeBobButton.parent("active-bob-button");
-  activeBobButton.class("control-input");
+  activeBobButton.class("button-input");
   activeBobButton.id("active-bob-control");
   activeBobButton.mousePressed(toggleActiveBobMode);
   console.log(activeBobButton);
@@ -32,7 +32,7 @@ function setup() {
     doDisplayBob: true,
     bobSize: 20,
     doRunInterference: true,
-    fieldSize: 200,
+    fieldSize: 300,
     fieldPulseRate: 0
   };
   BobsUno = new BobSystem(options);
@@ -59,14 +59,24 @@ function toggleActiveBobMode() {
   isActiveBobMode = !isActiveBobMode;
 
   if(isActiveBobMode){
-    activeBobButton.html('Active Bob Mode is On');
+    activeBobButton.html('ON');
+    activeBobButton.addClass('on');
   } else {
-    activeBobButton.html('Active Bob Mode is Off');
+    activeBobButton.html('OFF');
+    activeBobButton.removeClass('on');
   }
 }
 
 function mousePressed() {
   if(isActiveBobMode){
     BobsUno.checkActiveBob(mouseX, mouseY);
+  }
+}
+
+function keyPressed() {
+  if(isActiveBobMode){
+    if(keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
+      BobsUno.controlActiveBob(keyCode);
+    }
   }
 }

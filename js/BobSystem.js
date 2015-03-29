@@ -10,7 +10,8 @@ function BobSystem(options) {
         fieldPulseRate: options.fieldPulseRate,
         doDisplayBob: options.doDisplayBob
       },
-      mouseClickVector;
+      mouseClickVector,
+      activeBob;
 
   this.addBob = function(){
     var newBob = new Bob(bobOptions);
@@ -54,11 +55,18 @@ function BobSystem(options) {
     vectorToMouse = p5.Vector.sub(bob.position, mouseClickVector);
     mouseDistance = vectorToMouse.mag();
 
+    activeBob = null;
 
     if(mouseDistance <= bob.radius) {
       bob.isActiveBob = true;
+      activeBob = index;
+      console.log(activeBob);
     } else {
       bob.isActiveBob = false;
     }
+  }
+
+  this.controlActiveBob = function(arrowPressed) {
+    bobs[activeBob].acceptDirection(arrowPressed);
   }
 }
