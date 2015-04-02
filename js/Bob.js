@@ -183,7 +183,7 @@ function Bob(bobOptions) {
 
     hueDifference = bobView.getHueGap(thisBob.hue, otherBob.hue);
 
-    pushForceFactor = (pushForce * hueDifference) / (i * j * 10);
+    pushForceFactor = pushForce / (i * j * 10);
 
     pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
     pushVector1 = pushVector1.normalize();

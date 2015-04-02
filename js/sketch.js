@@ -14,7 +14,7 @@ function setup() {
   activeBobButton.mousePressed(toggleActiveBobMode);
   console.log(activeBobButton);
   
-  bobSlider = createSlider(2, 20, 2);
+  bobSlider = createSlider(2, 20, 5);
   bobSlider.parent("bob-slider");
   bobSlider.class("control-input");
   bobSlider.id("bob-control");
