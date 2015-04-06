@@ -14,7 +14,7 @@ function setup() {
   activeBobButton.mousePressed(toggleActiveBobMode);
   console.log(activeBobButton);
   
-  bobSlider = createSlider(2, 20, 5);
+  bobSlider = createSlider(2, 16, 4);
   bobSlider.parent("bob-slider");
   bobSlider.class("control-input");
   bobSlider.id("bob-control");
@@ -56,11 +56,15 @@ function windowResized() {
 }
 
 function toggleActiveBobMode() {
+  var $activeBobContainer = $("#active-bob-container");
+
   isActiveBobMode = !isActiveBobMode;
+
+  $activeBobContainer.toggleClass('on');
 
   if(isActiveBobMode){
     activeBobButton.html('ON');
-    activeBobButton.addClass('on');
+    activeBobButton.addClass('on');    
   } else {
     activeBobButton.html('OFF');
     activeBobButton.removeClass('on');
@@ -70,13 +74,5 @@ function toggleActiveBobMode() {
 function mousePressed() {
   if(isActiveBobMode){
     BobsUno.checkActiveBob(mouseX, mouseY);
-  }
-}
-
-function keyPressed() {
-  if(isActiveBobMode){
-    if(keyCode === UP_ARROW || keyCode === DOWN_ARROW || keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW) {
-      BobsUno.controlActiveBob(keyCode);
-    }
   }
 }

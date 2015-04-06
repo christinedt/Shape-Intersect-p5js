@@ -46,27 +46,26 @@ function BobSystem(options) {
   this.checkActiveBob = function(xPos, yPos) {
     mouseClickVector = createVector(xPos, yPos);
 
+    bobs.forEach(this.setActiveBobIndex);
     bobs.forEach(this.setActiveBob);
   }
 
-  this.setActiveBob = function(bob, index, bobs) {
+  this.setActiveBobIndex = function(bob, index, bobs) {
     var vectorToMouse, mouseDistance;
     
     vectorToMouse = p5.Vector.sub(bob.position, mouseClickVector);
     mouseDistance = vectorToMouse.mag();
 
-    activeBob = null;
-
     if(mouseDistance <= bob.radius) {
-      bob.isActiveBob = true;
       activeBob = index;
-      console.log(activeBob);
-    } else {
-      bob.isActiveBob = false;
     }
   }
 
-  this.controlActiveBob = function(arrowPressed) {
-    bobs[activeBob].acceptDirection(arrowPressed);
+  this.setActiveBob = function(bob, index, bobs) {
+    if(activeBob === index) {
+      bob.isActiveBob = true;
+    } else {
+      bob.isActiveBob = false;
+    }
   }
 }

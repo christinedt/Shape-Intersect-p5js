@@ -14,7 +14,8 @@ function Bob(bobOptions) {
       size = bobOptions.bobSize,
       hue = Math.floor(Math.random() * 256),
       fieldPulseFrame = 0,
-      pushForce, 
+      pushForce,
+      driveForce = createVector(0, 0),
       radius = size/2,
       tempXPos = Math.floor(Math.random() * (width-size) + size/2),
       tempYPos = Math.floor(Math.random() * (height-size) + size/2);
@@ -46,6 +47,10 @@ function Bob(bobOptions) {
       bills.forEach(bobView.runInterference, this);
     }
 
+    if(bobView.isActiveBob) {
+      bobView.driveBob();
+    }
+
     if(doRunBob) {
       bobView.update(bills);
     }
@@ -67,7 +72,7 @@ function Bob(bobOptions) {
   bobView.update = function(bills) {
     bobView.forces.forEach(bobView.addForce);
     bobView.velocity.add(bobView.acceleration.x, bobView.acceleration.y);
-    bobView.velocity.limit(5);
+    bobView.velocity.limit(7);
     bobView.position.add(bobView.velocity.x, bobView.velocity.y);
     bobView.checkForWalls();
   }
@@ -183,7 +188,7 @@ function Bob(bobOptions) {
 
     hueDifference = bobView.getHueGap(thisBob.hue, otherBob.hue);
 
-    pushForceFactor = pushForce / (i * j * 10);
+    pushForceFactor = (hueDifference/10) * pushForce / (i * j);
 
     pushVector1 = p5.Vector.sub(thisBob.position, firstIntersectionPoint);
     pushVector1 = pushVector1.normalize();
@@ -208,7 +213,7 @@ function Bob(bobOptions) {
     if(bobView.isActiveBob || !activeBobMode){
       fill(hue, 200, 200);
     } else {
-      fill(hue, 200, 200, 50);
+      fill(hue, 200, 200, 150);
     }
     ellipse(bobView.position.x, bobView.position.y, size, size);
   }
@@ -325,8 +330,37 @@ function Bob(bobOptions) {
     }
   }
 
+  bobView.driveBob = function() {
+    var driveForceMag,
+        driveForceIncrement = 0.1;
+
+    if (keyIsDown(LEFT_ARROW))
+      driveForce.add(-1 * driveForceIncrement, 0);
+
+    if (keyIsDown(RIGHT_ARROW))
+      driveForce.add(driveForceIncrement, 0);
+
+    if (keyIsDown(UP_ARROW))
+      driveForce.add(0, -1 * driveForceIncrement);
+
+    if (keyIsDown(DOWN_ARROW))
+      driveForce.add(0, driveForceIncrement);
+
+    bobView.forces.push(driveForce);
+
+    driveForceMag = driveForce.mag();
+
+    
+    if(driveForceMag > 0.01){
+      driveForce.mult(0.9);
+    } else if(driveForceMag > 0){
+      driveForce.mult(0);
+    }
+  }
+
   bobView.reset = function() {
     bobView.acceleration.mult(0);
+    bobView.velocity.mult(0.99999);
     bobView.forces = [];
     fieldPulseFrame += fieldPulseRate;
   }

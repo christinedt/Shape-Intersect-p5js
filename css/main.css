@@ -1,6 +1,7 @@
 html,
 body {
 	background-color: #000;
+	color: #fff;
 	font-family: 'Open Sans', sans-serif;
 	height: 100%;
 	margin: 0;
@@ -8,6 +9,24 @@ body {
 	position: relative;
 	width: 100%;
 }
+
+/*MAIN CONTAINER*/
+
+.main-container {
+	display: block;
+	position: relative;
+	width: 100%;
+}
+
+.sketch-container {
+	height: 100%;
+	margin: auto;
+	position: relative;
+	width: 100%;
+	z-index: 1;
+}
+
+/*SIDEBAR*/
 
 .side-bar {
 	background: transparent;
@@ -37,6 +56,17 @@ body {
 	opacity: 1;
 }
 
+.side-bar:hover .control-tip {
+	background-color: #879;
+	opacity: 1;
+}
+
+input[type=checkbox] {
+   position: absolute;
+   top: -9999px;
+   left: -9999px;
+}
+
 .header {
 	color: #FFF;
 	display: inline-block;
@@ -48,20 +78,6 @@ body {
 	padding: 0 15px;
 	position: relative;
 	text-align: center;
-}
-
-.main-container {
-	display: block;
-	position: relative;
-	width: 100%;
-}
-
-.sketch-container {
-	height: 100%;
-	margin: auto;
-	position: relative;
-	width: 100%;
-	z-index: 1;
 }
 
 .control-panel {
@@ -85,14 +101,35 @@ body {
 	position: relative;
 }
 
+.control-item,
+.control-tip {
+	display: block;
+	overflow: auto;
+}
+
 .control-item {
 	padding: 15px;
 }
 
-input[type=checkbox] {
-   position: absolute;
-   top: -9999px;
-   left: -9999px;
+.control-tip {
+	background: transparent;
+	font-size: 0.75em;
+	height: 0;
+	text-align: center;
+	z-index: 3;
+
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.control-tip-copy {
+	display: block;
+	margin: 0;
+	padding: 10px;
+}
+
+.control-item.active-bob.on ~ .control-tip.active-bob {
+	height: 55px;
 }
 
 .menu-label {
@@ -115,7 +152,6 @@ input[type=checkbox] {
 	color: #fff;
 	display: block;
 	float: left;
-	font-family: 'Open Sans', sans-serif;
 	font-weight: 600;
 	opacity: 0.5;
 	text-align: center;
@@ -149,7 +185,6 @@ input[type=checkbox] {
 	color: #fff;
 	display: inline-block;
 	float: left;
-	font-family: 'Open Sans', sans-serif;
 	position: relative;
 	text-align: center;
 	width: 20%;
@@ -159,7 +194,6 @@ input[type=checkbox] {
 	color: #fff;
 	display: inline-block;
 	float: left;
-	font-family: 'Open Sans', sans-serif;
 	position: relative;
 	text-align: center;
 	width: 60%;
@@ -177,14 +211,4 @@ input[type=checkbox] {
 	float: left;
 	position: relative;
 	width: 40%;
-}
-
-.tool-tip {
-	background: #dda;
-	border: 5px solid #dda;
-	border-bottom-color: transparent;
-	left: 20px;
-	position: absolute;
-	top: 0;
-	z-index: 3;
 }
