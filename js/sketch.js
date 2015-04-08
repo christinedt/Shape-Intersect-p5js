@@ -7,14 +7,14 @@ function setup() {
   sketch = createCanvas(windowWidth, windowHeight);
   sketch.parent("sketch-container");
 
-  activeBobButton = createButton('Active Bob Mode is Off', true);
+  activeBobButton = createButton('OFF', true);
   activeBobButton.parent("active-bob-button");
-  activeBobButton.class("control-input");
+  activeBobButton.class("button-input");
   activeBobButton.id("active-bob-control");
   activeBobButton.mousePressed(toggleActiveBobMode);
   console.log(activeBobButton);
   
-  bobSlider = createSlider(2, 20, 2);
+  bobSlider = createSlider(2, 16, 4);
   bobSlider.parent("bob-slider");
   bobSlider.class("control-input");
   bobSlider.id("bob-control");
@@ -23,6 +23,11 @@ function setup() {
   forceSlider.parent("force-slider");
   forceSlider.class("control-input");
   forceSlider.id("force-control");
+  
+  bounceSlider = createSlider(1, 0, 1);
+  bounceSlider.parent("bounce-slider");
+  bounceSlider.class("control-input");
+  bounceSlider.id("bounce-control");
 
   colorMode(HSB);
   frameRate(20);
@@ -32,8 +37,8 @@ function setup() {
     doDisplayBob: true,
     bobSize: 20,
     doRunInterference: true,
-    fieldSize: 200,
-    fieldPulseRate: 0
+    fieldSize: 300,
+    fieldPulseRate: 1
   };
   BobsUno = new BobSystem(options);
 }
@@ -56,12 +61,18 @@ function windowResized() {
 }
 
 function toggleActiveBobMode() {
+  var $activeBobContainer = $("#active-bob-container");
+
   isActiveBobMode = !isActiveBobMode;
 
+  $activeBobContainer.toggleClass('on');
+
   if(isActiveBobMode){
-    activeBobButton.html('Active Bob Mode is On');
+    activeBobButton.html('ON');
+    activeBobButton.addClass('on');    
   } else {
-    activeBobButton.html('Active Bob Mode is Off');
+    activeBobButton.html('OFF');
+    activeBobButton.removeClass('on');
   }
 }
 

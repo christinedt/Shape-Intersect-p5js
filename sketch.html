@@ -2,6 +2,8 @@
 	<head>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,600' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<script language="javascript" type="text/javascript" src="js/jquery-2.1.3.min.js"></script>
+		<script language="javascript" type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
 		<script language="javascript" type="text/javascript" src="js/p5.js"></script>
 		<script language="javascript" type="text/javascript" src="js/p5.dom.js"></script>
 		<script language="javascript" type="text/javascript" src="js/equations.js"></script>
@@ -11,33 +13,70 @@
 	</head>
 	<body>
 		<div class="side-bar">
-			<label for="menu-toggle" class="menu-label"></label>
-			<h1 class="header">Social Tension</h1>
-			<input id="menu-toggle" name="menu-toggle" type="checkbox" class="">
+			<div class="side-bar-header">
+				<div class="menu-label"></div>
+				<h1 class="header">Social Tension</h1>
+			</div>
 			<div id="control-panel" class="control-panel">
 				<ul>
-					<li class="control-item">
-						<p>Active Bob Mode</p>
-						<div id="active-bob-button" class="control-container"></div>
+					<li class="tier-1-menu-item">
+						<label for="space-menu-toggle" class="tier-1-label">Space</label>
+						<input id="space-menu-toggle" name="space-menu-toggle" type="checkbox" class="">
+						<div class="tier-2-control-panel space">
+							<ul>
+								<li class="tier-2-control item">
+									<div class="control-label">
+										<img class="label-image" src="img/bounce-icon.png" />
+									</div>
+									<div id="bounce-slider" class="control-container"></div>
+									<div class="control-label">
+										<img class="label-image" src="img/portal-icon.png" />
+									</div>
+								</li>
+							</ul>
+						</div>
 					</li>
-					<li class="control-item">
-						<p>Number of Bobs</p>
-						<div class="control-label">
-							2
-						</div>
-						<div id="bob-slider" class="control-container"></div>
-						<div class="control-label">
-							20
+					<li class="tier-1-menu-item">
+						<label for="social-menu-toggle" class="tier-1-label">Social</label>
+						<input id="social-menu-toggle" name="social-menu-toggle" type="checkbox" class="">
+						<div class="tier-2-control-panel social">
+							<ul>
+								<li class="tier-2-control item">
+									<div class="control-label">
+										Few
+									</div>
+									<div id="bob-slider" class="control-container"></div>
+									<div class="control-label">
+										Many
+									</div>
+								</li>
+								<li class="tier-2-control item">
+									<div class="control-label">
+										-10
+									</div>
+									<div id="force-slider" class="control-container"></div>
+									<div class="control-label">
+										10
+									</div>
+								</li>
+							</ul>
 						</div>
 					</li>
-					<li class="control-item">
-						<p>Push Force</p>
-						<div class="control-label">
-							-10
-						</div>
-						<div id="force-slider" class="control-container"></div>
-						<div class="control-label">
-							10
+					<li class="tier-1-menu-item">
+						<label for="self-menu-toggle" class="tier-1-label">Self</label>
+						<input id="self-menu-toggle" name="self-menu-toggle" type="checkbox" class="">
+						<div class="tier-2-control-panel self">
+							<ul>
+								<li id="active-bob-container" class="tier-2-control item active-bob">
+									<div class="button-label">
+										Protagonist Mode is
+									</div>
+									<div id="active-bob-button" class="button-container"></div>
+								</li>
+								<li class="active-bob tier-2-control tip">
+									<p class="control-tip-copy"><em>Click a bob to designate a protagonist.<br/>Use arrow keys to steer.</em></p>
+								</li>
+							</ul>
 						</div>
 					</li>
 				</ul>
