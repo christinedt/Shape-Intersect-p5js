@@ -23,6 +23,11 @@ function setup() {
   forceSlider.parent("force-slider");
   forceSlider.class("control-input");
   forceSlider.id("force-control");
+  
+  bounceSlider = createSlider(1, 0, 1);
+  bounceSlider.parent("bounce-slider");
+  bounceSlider.class("control-input");
+  bounceSlider.id("bounce-control");
 
   colorMode(HSB);
   frameRate(20);
@@ -33,7 +38,7 @@ function setup() {
     bobSize: 20,
     doRunInterference: true,
     fieldSize: 300,
-    fieldPulseRate: 0
+    fieldPulseRate: 1
   };
   BobsUno = new BobSystem(options);
 }

@@ -31,7 +31,6 @@ body {
 .side-bar {
 	background: transparent;
 	display: block;
-	opacity: 0.5;
 	overflow: auto;
 	position: fixed;
 	width: 325px;
@@ -41,36 +40,17 @@ body {
     transition: 0.5s;
 }
 
-.side-bar:hover {
-	background: #324;
-	opacity: 1;
-}
+.side-bar-header {
+	background: transparent;
+	opacity: 0.3;
 
-.side-bar:hover .menu-label {
-	background-color: #435;
-	opacity: 1;
-}
-
-.side-bar:hover .control-panel {
-	background-color: #435;
-	opacity: 1;
-}
-
-.side-bar:hover .control-tip {
-	background-color: #879;
-	opacity: 1;
-}
-
-input[type=checkbox] {
-   position: absolute;
-   top: -9999px;
-   left: -9999px;
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
 }
 
 .header {
 	color: #FFF;
 	display: inline-block;
-	float: left;
 	font-size: 2em;
 	font-weight: 700;
 	line-height: 60px;
@@ -78,58 +58,9 @@ input[type=checkbox] {
 	padding: 0 15px;
 	position: relative;
 	text-align: center;
-}
-
-.control-panel {
-	background: transparent;
-	clear: both;
-	display: block;
-	height: 0px;
-	overflow: auto;
-	position: relative;
-	width: 100%;
-	z-index: 2;
 
 	-webkit-transition: 0.5s;
     transition: 0.5s;
-}
-
-.control-panel ul {
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-	position: relative;
-}
-
-.control-item,
-.control-tip {
-	display: block;
-	overflow: auto;
-}
-
-.control-item {
-	padding: 15px;
-}
-
-.control-tip {
-	background: transparent;
-	font-size: 0.75em;
-	height: 0;
-	text-align: center;
-	z-index: 3;
-
-	-webkit-transition: 0.5s;
-    transition: 0.5s;
-}
-
-.control-tip-copy {
-	display: block;
-	margin: 0;
-	padding: 10px;
-}
-
-.control-item.active-bob.on ~ .control-tip.active-bob {
-	height: 55px;
 }
 
 .menu-label {
@@ -148,24 +79,139 @@ input[type=checkbox] {
     transition: 0.5s;
 }
 
-.menu-label--button {
-	color: #fff;
-	display: block;
-	float: left;
-	font-weight: 600;
-	opacity: 0.5;
-	text-align: center;
-	z-index: 3;
+.side-bar:hover .side-bar-header{
+	background: #324;
+	opacity: 1;
 }
 
-#menu-toggle:checked ~ .control-panel {
-	height: 300px;
+input[type=checkbox] {
+   position: absolute;
+   top: -9999px;
+   left: -9999px;
+}
+
+/*TIER 1 MENU*/
+
+.control-panel {
+	background: transparent;
+	clear: both;
+	display: block;
+	overflow: auto;
+	position: relative;
+	width: 100%;
+	z-index: 2;
+
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.control-panel ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	position: relative;
+}
+
+.tier-1-menu-item {
+	background: #435;
+	display: block;
+	opacity: 0.6;
+	overflow: hidden;
+
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.side-bar:hover .tier-1-menu-item:hover {
+	opacity: 0.85;
+}
+
+.tier-1-label {
+	display: block;
+	font-size: 1.5em;
+	font-weight: 400;
+	height: 0;
+	line-height: 1.8em;
+	overflow: hidden;
+	text-align: center;
+	vertical-align: middle;
+	width: 100%;
+
+	-webkit-transition: 0.3s;
+    transition: 0.3s;
+}
+
+.side-bar:hover .tier-1-label {
+	height: 1.8em;
+}
+
+/*TIER 2 MENU*/
+
+.tier-2-control-panel {
+	background: #546;
+	display: block;
+	height: auto;
+	overflow: hidden;
+	visibility: hidden;
+
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.tier-2-control {
+	display: block;
+	height: 0;
+	overflow: hidden;
+	padding: 0;
+
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.tier-2-control.tip {
+	background: #879;
+	font-size: 0.75em;
+	height: 0;
+	text-align: center;
+	z-index: 3;
+
+	-webkit-transition: 0.5s;
+    transition: 0.5s;
+}
+
+.side-bar:hover #space-menu-toggle:checked ~ .tier-2-control-panel,
+.side-bar:hover #social-menu-toggle:checked ~ .tier-2-control-panel,
+.side-bar:hover #self-menu-toggle:checked ~ .tier-2-control-panel {
+	visibility: visible;
+}
+
+.side-bar:hover #space-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.item,
+.side-bar:hover #social-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.item,
+.side-bar:hover #self-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.item {
+	height: 30px;
+	overflow: auto;
+	padding: 15px;
+	visibility: visible;
+}
+
+.control-tip-copy {
+	display: block;
+	margin: 0;
+	padding: 10px;
+}
+
+.side-bar:hover #self-menu-toggle:checked ~ .tier-2-control-panel .tier-2-control.active-bob.on ~ .tier-2-control.tip.active-bob {
+	height: 55px;
 }
 
 .control-input {
 	display: block;
 	position: relative;
 	width: 100%;
+}
+
+.label-image {
+	width: 30px;
 }
 
 .button-input {
@@ -212,3 +258,6 @@ input[type=checkbox] {
 	position: relative;
 	width: 40%;
 }
+
+
+/* NEW STUFF */

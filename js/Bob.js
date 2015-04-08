@@ -183,7 +183,7 @@ function Bob(bobOptions) {
     secondIntersectionPoint = createVector(intersections[2], intersections[3]);
 
     if(!activeBobMode || (activeBobMode && bobView.isActiveBob)) {
-      bobView.renderIntersectShape(intersections, distance, otherBob.hue);
+      bobView.renderIntersectShape(intersections, distance, otherBob.hue, i);
     }
 
     hueDifference = bobView.getHueGap(thisBob.hue, otherBob.hue);
@@ -218,19 +218,26 @@ function Bob(bobOptions) {
     ellipse(bobView.position.x, bobView.position.y, size, size);
   }
   
-  bobView.renderIntersectShape = function(intersections, distance, otherHue) {
+  bobView.renderIntersectShape = function(intersections, distance, otherHue, i) {
     var circleNormal = createVector(radius, 0),
         distIntA = createVector(intersections[0], intersections[1]),
         distIntB = createVector(intersections[2], intersections[3]),
-        angle1, angle2, newHue;
+        angle1, angle2, newHue, opacity;
 
     newHue = bobView.averageHues(bobView.hue, otherHue);
+
+    if(activeBobMode && bobView.isActiveBob) {
+      opacity = map(i, 0, bobView.fieldSize, 0, 255);
+      opacity = (255-opacity);
+    } else {
+      opacity = 200;
+    }
         
     
     //Dots
-    var dotSize = 2;
+    var dotSize = 3;
     noStroke();
-    fill(newHue, 200, 200, 200);
+    fill(newHue, 200, 200, opacity);
     ellipse(distIntA.x, distIntA.y, dotSize, dotSize);
     if(activeBobMode && bobView.isActiveBob) {
       ellipse(distIntB.x, distIntB.y, dotSize, dotSize);
@@ -325,7 +332,7 @@ function Bob(bobOptions) {
     for(var i = (2*fieldPulseFrame); i < bobView.fieldSize; i+=(bobView.fieldIncrement*2)){
       var opacity = map(i, 0, bobView.fieldSize, 0, 255);
       opacity = (255-opacity);
-      stroke(0, 0, 255, opacity);
+      stroke(hue, 200, 255, opacity);
       ellipse(bobView.position.x, bobView.position.y, i, i);
     }
   }
